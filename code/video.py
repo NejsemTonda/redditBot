@@ -45,7 +45,7 @@ for i, post in enumerate(get_text("001.txt")):
     ats = audio.duration / len(words)
     
     clips = [word_animation(word, time_offset + j*ats, ats) for j, word in enumerate(words)]
-    video = mpy.CompositeVideoClip([c.set_pos('center') for c in clips], size=(1920,1020))
+    video = mpy.CompositeVideoClip([c.set_pos('center') for c in clips], size=background.size)
 
     audio = audio.set_start(time_offset)
     video = video.set_audio(audio)
@@ -53,8 +53,7 @@ for i, post in enumerate(get_text("001.txt")):
     
     videos.append(video)
 
-videos = list(map(crop, videos))
 background = get_random_interval(background, time_offset)
-video = mpy.CompositeVideoClip(videos+[background])
+video = mpy.CompositeVideoClip([background]+videos)
 
-video.write_videofile("word_animation.mp4", codec='libx264', fps=12)
+video.write_videofile("word_animation.mp4", codec='libx264', fps=6)
