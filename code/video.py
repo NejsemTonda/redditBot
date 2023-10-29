@@ -2,15 +2,14 @@ import moviepy.editor as mpy
 from moviepy.video.fx.all import crop
 import random
 import os
+from moviepy.video.fx import resize
 
-def crop(video):
-    new_height = video.size[1]
-    new_width = int(new_height * 9/16)
-    
-    x_center = (video.size[0]) // 2
-    y_center = (video.size[1] - new_height) // 2
-    return  crop(video, width=new_width, height=new_height, x_center=x_center, y_center=y_center)
-    
+def anim(t,ats):
+    print(f"----> {t-ats}")
+    val = max(1, 1.5-0.5*(t-ats))
+    print(val)
+    return val
+
 
 def get_random_interval(clip, t=60):
     duration = clip.duration
@@ -23,10 +22,15 @@ def get_random_interval(clip, t=60):
     return clip.subclip(start, end)
 
 def word_animation(word, start_time, ats):
-    txt_clip = mpy.TextClip(word, font="Amiri-Bold", fontsize=100, color='white')
-    txt_clip = txt_clip.set_duration(ats)
-    txt_clip = txt_clip.set_start(start_time)
-    return txt_clip
+    text = mpy.TextClip(word, font="URWBookman-Demi", fontsize=100, color='white')
+    text = text.set_duration(ats)
+    text = text.set_start(start_time)
+    
+    #text = text.resize(lambda t: max(1, 1.5-0.5*(3*t)))
+    text = text.resize(lambda t: anim(t, ats))
+    
+
+    return text
 
 
 def get_text(name):
@@ -35,7 +39,7 @@ def get_text(name):
 
 
 
-background = mpy.VideoFileClip("../src/background/cropped_trackmania.webm")
+background = mpy.VideoFileClip("../src/background/cropped_trackmania.webm").volumex(0.1)
 audios = [mpy.AudioFileClip("../src/voices/"+name) for name in os.listdir("../src/voices") if "001-" in name]
 videos = []
 time_offset = 0
@@ -52,8 +56,10 @@ for i, post in enumerate(get_text("001.txt")):
     time_offset += audio.duration + 0.5
     
     videos.append(video)
+    break
 
 background = get_random_interval(background, time_offset)
 video = mpy.CompositeVideoClip([background]+videos)
+#video = video.fl_image(blur)
 
-video.write_videofile("word_animation.mp4", codec='libx264', fps=6)
+video.write_videofile("word_animation.mp4", codec='libx264', fps=60)
