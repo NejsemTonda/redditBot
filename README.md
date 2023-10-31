@@ -9,3 +9,4 @@ Creating short videos completly automated by python skripts
 * generate video
 * add texts to videos
 * API upload to youtube, facebook ... 
+* scrape the reddit urls from facebook profile
