@@ -2,13 +2,6 @@ import moviepy.editor as mpy
 from moviepy.video.fx.all import crop
 import random
 import os
-#from moviepy.video.fx import resize
-import moviepy.video.fx.all as vfx
-
-def anim(t,ats):
-    val = 1+0.2*t
-    return val
-
 
 def get_random_interval(clip, t=60):
     duration = clip.duration
@@ -31,7 +24,7 @@ def word_animation(word, start_time, ats):
     shadow = shadow.set_start(start_time)
     shadow = shadow.set_pos(('center', 5))
 
-    final = mpy.CompositeVideoClip([shadow, text])
+    final = mpy.CompositeVideoClip([shadow,text])
 
     return final
 
@@ -43,6 +36,7 @@ def get_text(name):
 
 
 background = mpy.VideoFileClip("../src/background/cropped_trackmania.webm").volumex(0.1)
+music = mpy.AudioFileClip("../src/background/jazz.mp3").volumex(0.08)
 audios = [mpy.AudioFileClip("../src/voices/"+name) for name in os.listdir("../src/voices") if "001-" in name]
 videos = []
 time_offset = 0
@@ -62,7 +56,10 @@ for i, post in enumerate(get_text("001.txt")):
     break
 
 background = get_random_interval(background, time_offset)
-video = mpy.CompositeVideoClip([background]+videos)
-#video = video.fl_image(blur)
+music = get_random_interval(music, time_offset)
 
-video.write_videofile("word_animation.mp4", codec='libx264', fps=6)
+video = mpy.CompositeVideoClip([background]+videos)
+audio = mpy.CompositeAudioClip([video.audio, music])
+
+video = video.set_audio(audio)
+video.write_videofile("word_animation.mp4", codec='libx264', fps=60)
