@@ -2,12 +2,11 @@ import moviepy.editor as mpy
 from moviepy.video.fx.all import crop
 import random
 import os
-from moviepy.video.fx import resize
+#from moviepy.video.fx import resize
+import moviepy.video.fx.all as vfx
 
 def anim(t,ats):
-    print(f"----> {t-ats}")
-    val = max(1, 1.5-0.5*(t-ats))
-    print(val)
+    val = 1+0.2*t
     return val
 
 
@@ -25,12 +24,16 @@ def word_animation(word, start_time, ats):
     text = mpy.TextClip(word, font="URWBookman-Demi", fontsize=100, color='white')
     text = text.set_duration(ats)
     text = text.set_start(start_time)
-    
-    #text = text.resize(lambda t: max(1, 1.5-0.5*(3*t)))
-    text = text.resize(lambda t: anim(t, ats))
-    
+    text = text.set_pos('center')
 
-    return text
+    shadow = mpy.TextClip(word, font="URWBookman-Demi", fontsize=100, color='black')
+    shadow = shadow.set_duration(ats)
+    shadow = shadow.set_start(start_time)
+    shadow = shadow.set_pos(('center', 5))
+
+    final = mpy.CompositeVideoClip([shadow, text])
+
+    return final
 
 
 def get_text(name):
@@ -62,4 +65,4 @@ background = get_random_interval(background, time_offset)
 video = mpy.CompositeVideoClip([background]+videos)
 #video = video.fl_image(blur)
 
-video.write_videofile("word_animation.mp4", codec='libx264', fps=60)
+video.write_videofile("word_animation.mp4", codec='libx264', fps=6)
