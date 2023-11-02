@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 
 def crop(target, remove_sound=False):
     video = mpy.VideoFileClip(target)
+    video = video.resize((1920, 1080))
      
     if remove_sound:
         video = video.set_audio(None)
@@ -26,3 +27,4 @@ args = parser.parse_args()
 
 for t in args.videos:
     crop(t, args.remove_sound)
+
