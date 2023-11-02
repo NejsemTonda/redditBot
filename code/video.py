@@ -33,33 +33,48 @@ def get_text(name):
     with open(f"../src/text/{name}", 'r') as file:
         return list(map(str.strip, file.readlines()))
 
-
-
-background = mpy.VideoFileClip("../src/background/cropped_trackmania-1.webm").volumex(0.05)
-music = mpy.AudioFileClip("../src/background/jazz.mp3").volumex(0.04)
-audios = [mpy.AudioFileClip("../src/voices/"+name) for name in os.listdir("../src/voices") if "001-" in name]
-videos = []
-time_offset = 0
-for i, post in enumerate(get_text("001.txt")):
-    words = post.split()
-    audio = audios[i]
-    ats = audio.duration / len(words)
+def texts_to_videos(texts, audios, size=(606,1080)):
+    videos = []
+    time_offset = 0
+    for i, post in enumerate(texts):
+        words = post.split()
+        audio = audios[i]
+        ats = audio.duration / len(words)
+        
+        clips = [word_animation(word, time_offset + j*ats, ats) for j, word in enumerate(words)]
+        video = mpy.CompositeVideoClip([c.set_pos('center') for c in clips], size=size)
     
-    clips = [word_animation(word, time_offset + j*ats, ats) for j, word in enumerate(words)]
-    video = mpy.CompositeVideoClip([c.set_pos('center') for c in clips], size=background.size)
+        audio = audio.set_start(time_offset)
+        video = video.set_audio(audio)
+        time_offset += audio.duration + 0.5
+        
+        videos.append(video)
+ 
+    return mpy.CompositeVideoClip(videos)
 
-    audio = audio.set_start(time_offset)
+def get_random_background():
+    return random.choice([mpy.VideoFileClip("../src/background/"+file) for file in os.listdir("../src/background") if "cropped_" in file]).volumex(0.05)
+
+def create_video(name):
+    print("getting background")
+    background = get_random_background()
+
+    print("generating text video")
+    texts = get_text(name+".txt")
+    audios = list(map(mpy.AudioFileClip, sorted(["../src/voices/"+file for file in os.listdir("../src/voices") if name in file])))
+    text_video = texts_to_videos(texts, audios, size=background.size)
+
+    print("getting music")
+    music = mpy.AudioFileClip("../src/background/jazz.m4a").volumex(0.04)
+    
+    print("Composing everithung together")
+    background = get_random_interval(background, text_video.duration)
+    music = get_random_interval(music, text_video.duration)
+
+    video = mpy.CompositeVideoClip([background, text_video])
+    audio = mpy.CompositeAudioClip([text_video.audio, music])
+
     video = video.set_audio(audio)
-    time_offset += audio.duration + 0.5
-    
-    videos.append(video)
-    break
 
-background = get_random_interval(background, time_offset)
-music = get_random_interval(music, time_offset)
-
-video = mpy.CompositeVideoClip([background]+videos)
-audio = mpy.CompositeAudioClip([video.audio, music])
-
-video = video.set_audio(audio)
-video.write_videofile("word_animation.mp4", codec='libx264', fps=60)
+    print("saving")
+    video.write_videofile(f"../videos/{name}.mp4", fps=60)
