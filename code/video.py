@@ -13,18 +13,18 @@ def get_random_interval(clip, t=60):
 
     return clip.subclip(start, end)
 
+
 def word_animation(word, start_time, ats):
     text = mpy.TextClip(word, font="URWBookman-Demi", fontsize=100, color='white')
-    text = text.set_duration(ats)
-    text = text.set_start(start_time)
     text = text.set_pos('center')
 
     shadow = mpy.TextClip(word, font="URWBookman-Demi", fontsize=100, color='black')
-    shadow = shadow.set_duration(ats)
-    shadow = shadow.set_start(start_time)
     shadow = shadow.set_pos(('center', 5))
 
     final = mpy.CompositeVideoClip([shadow,text])
+    final = final.set_duration(ats)
+    final = final.set_start(start_time)
+    final = final.resize(lambda t: min(1, 1 - 6*(1/6*ats - t)))
 
     return final
 
@@ -35,8 +35,8 @@ def get_text(name):
 
 
 
-background = mpy.VideoFileClip("../src/background/cropped_trackmania.webm").volumex(0.1)
-music = mpy.AudioFileClip("../src/background/jazz.mp3").volumex(0.08)
+background = mpy.VideoFileClip("../src/background/cropped_trackmania-1.webm").volumex(0.05)
+music = mpy.AudioFileClip("../src/background/jazz.mp3").volumex(0.04)
 audios = [mpy.AudioFileClip("../src/voices/"+name) for name in os.listdir("../src/voices") if "001-" in name]
 videos = []
 time_offset = 0
