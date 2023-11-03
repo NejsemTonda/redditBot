@@ -5,19 +5,27 @@ Scraping is going to be hard propably sinvce reddit's changes to is API. Might u
 '''
 
 def get_json(url):
+    # this is not working, reddit usses diferent id for sharing and for threads 
+    raise NotImplementedError("")
+    re
     tokens = url.split("/")
-    reddit_id = tokens[tokens.index("comments")+1]
+    reddit_id = tokens[-1]
+    reddit = tokens[tokens.index('r')+1]
 
-    return requests.get(f"https://www.reddit.com/r/AskReddit/comments/{reddit_id}.json", headers = {'User-agent': 'your bot 0.1'}).json()
+    #request.history
+    return requests.get(f"https://www.reddit.com/r/{reddit}/comments/{reddit_id}.json", headers = {'User-agent': 'your bot 0.1'}).json()
 
-url = "https://www.reddit.com/r/AskReddit/comments/vb6pge/horny_redditors_how_to_ask_for_nudes_without/"
-data = get_json(url)
+def get_QnA(url):
+    data = get_json(url)
+    print(data)
+    
+    question = data[0]['data']['children'][0]['data']['title']
+    
+    responses = []
+    for c in data[1]['data']['children']:
+        response.append(c['data']['body'])
 
-question = data[0]['data']['children'][0]['data']['title']
-
-for c in data[1]['data']['children']:
-    response = c['data']['body']
-    print(response)
-    print("="*20)
+    return [question]+responses
 
 
+print(get_QnA("https://www.reddit.com/r/AskReddit/s/q4tcjAv0hA"))
