@@ -24,7 +24,7 @@ def word_animation(word, start_time, ats):
     final = mpy.CompositeVideoClip([shadow,text])
     final = final.set_duration(ats)
     final = final.set_start(start_time)
-    final = final.resize(lambda t: min(1, 1 - 6*(1/6*ats - t)))
+    final = final.resize(lambda t: max(0.1, min(1, 1 - 6*(1/6*ats - t))))
 
     return final
 
@@ -55,12 +55,13 @@ def texts_to_videos(texts, audios, size=(606,1080)):
 def get_random_background():
     return random.choice([mpy.VideoFileClip("../src/background/"+file) for file in os.listdir("../src/background") if "cropped_" in file]).volumex(0.05)
 
-def create_video(name):
+def create_video(name, text):
     print("getting background")
     background = get_random_background()
 
     print("generating text video")
-    texts = get_text(name+".txt")
+    #texts = get_text(name+".txt")
+    texts = text
     audios = list(map(mpy.AudioFileClip, sorted(["../src/voices/"+file for file in os.listdir("../src/voices") if name in file])))
     text_video = texts_to_videos(texts, audios, size=background.size)
 
