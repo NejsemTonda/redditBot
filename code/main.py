@@ -13,14 +13,23 @@ def get_voice_len(name):
 
 def main(args):
     print(args)
+
+    # get already scraped reddits
     if args.filter:
         with open("scraped.txt", 'r') as file:
             scraped = file.read().split()
     else:
         scraped = []
-    print("getting reddits")
-    links = get_reddits() # unfiltred links
-    links = list(filter(lambda x: x not in scraped, links))   
+
+    # if reddit was not specified, look in facebook and get all new ones
+    if args.reddit is None:
+        print("getting reddits")
+        links = get_reddits() # unfiltred links
+        print(f"get {len(links) links}")
+        links = list(filter(lambda x: x not in scraped, links))   
+        print(f"{len(links) links were new (rest is filtred out)}")
+    else:
+        links = [args.reddit]
 
     print("getting qnas")
     qnas = [get_QnA(link) for link in links]
@@ -38,8 +47,7 @@ def main(args):
         while len(args.names) < len(qnas):
             args.names.append(f"{c:04}")
             c += 1
-    
-    
+
     for name, qna in zip(args.names, qnas):
         audio_len = 0
         for i, text in enumerate(qna):
@@ -58,6 +66,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-f", "--filter", action="store_false", help="filter out all the already done reddits")
     parser.add_argument("-n", "--names", nargs="*", default=[], help="name of the video (number if not specified)")
+    parser.add_argument("-r", "--reddit", help="if specified, use this reddit url and dont look in facebook messeges")
     args = parser.parse_args()
 
     main(args)
