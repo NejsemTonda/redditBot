@@ -53,6 +53,3 @@ def api_interface(text, name):
         voice = voice
     )
     elevenlabs.save(audio, f"../src/voices/{name}.mp3")
-
-
-synt_voice("What is the best sex or dating advice you've ever been given?", "test")
