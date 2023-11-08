@@ -19,10 +19,8 @@ def main(args):
     else:
         scraped = []
     print("getting reddits")
-    #links = get_reddits() # unfiltred links
-    #links = list(filter(lambda x: x not in scraped, links))   
-
-    links = ["https://www.reddit.com/r/AskReddit/s/q4tcjAv0hA", "https://www.reddit.com/r/AskReddit/s/JYvp76RmyM"]
+    links = get_reddits() # unfiltred links
+    links = list(filter(lambda x: x not in scraped, links))   
 
     print("getting qnas")
     qnas = [get_QnA(link) for link in links]
@@ -47,13 +45,14 @@ def main(args):
         for i, text in enumerate(qna):
             print(f"synthesize {text} as {name}-{i}")
             synt_voice(text, name+f"-{i}")
-            audio_len += get_voice_len(name+f"-{i}") + 5
+            audio_len += get_voice_len(name+f"-{i}") + 1
             if audio_len > 60:
                 qna = qna[:i]
                 break
-            
         create_video(name, qna)
-        quit()
+
+        with open("scraped.txt",'a') as file:
+            file.write(links.pop(0)+"\n")
     
 if __name__ == "__main__":
     parser = ArgumentParser()
