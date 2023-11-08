@@ -32,6 +32,13 @@ voice_ids = [
 ]
     
 def synt_voice(text, name):
+    try:
+        api_interface(text, name)
+    except elevenlabs.api.error.RateLimitError:
+        elevenlabs.set_api_key(os.environ["ELEVENLABS_TOKEN2"])
+        api_interface(text, name)
+
+def api_interface(text, name):
     voice = elevenlabs.Voice(
         voice_id = random.choice(voice_ids),
         settings = elevenlabs.VoiceSettings(
@@ -45,5 +52,7 @@ def synt_voice(text, name):
         text = text,
         voice = voice
     )
-    
     elevenlabs.save(audio, f"../src/voices/{name}.mp3")
+
+
+synt_voice("What is the best sex or dating advice you've ever been given?", "test")
