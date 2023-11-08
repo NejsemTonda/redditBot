@@ -25,9 +25,9 @@ def main(args):
     if args.reddit is None:
         print("getting reddits")
         links = get_reddits() # unfiltred links
-        print(f"get {len(links) links}")
+        print(f"get {len(links)} links")
         links = list(filter(lambda x: x not in scraped, links))   
-        print(f"{len(links) links were new (rest is filtred out)}")
+        print(f"{len(links)} links were new (rest is filtred out)")
     else:
         links = [args.reddit]
 

@@ -1,8 +1,5 @@
 import requests
 import json 
-'''
-Scraping is going to be hard propably sinvce reddit's changes to is API. Might use manual scraping instead
-'''
 
 def get_json(url):
     req = requests.get(url)
@@ -22,6 +19,11 @@ def get_QnA(url):
     responses = []
     for c in data[1]['data']['children']:
         if 'body' in c['data']:
-            responses.append(c['data']['body'])
-
+            r = c['data']['body']
+            if "I am a bot" in r:
+                continue
+            responses.append(r)
+    
     return [question]+responses
+
+
