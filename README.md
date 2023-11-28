@@ -6,9 +6,9 @@ Creating short videos completly automated by python scripts
 Feel free tu use this code however you want. I use it like this:
 
 1. Step: If reddit page is specified, go to step 2. else:
-* open web browser and login to facebook. 
-* Scrape all reddit pages from alt. account which I use for sharing reddits 
-* Filter already proccessed reddits
+   * open web browser and login to facebook. 
+   * Scrape all reddit pages from alt. account which I use for sharing reddits 
+   * Filter already proccessed reddits
 
 2. Step: Scrape reddit pages and get post Head lines and all the comments
 3. Step: Synthesise voice from eleven labs api based on the scraped data
@@ -20,7 +20,7 @@ Feel free tu use this code however you want. I use it like this:
 
 * tts
     * use eleven labs api ✅
-    * create enough of tokens so that I never run out or used cahracters
+    * create enough of elevenlabs tokens so that I never run out or used cahracters ✅
 
 * reddit scraping
     * get reddit json ✅
@@ -31,7 +31,7 @@ Feel free tu use this code however you want. I use it like this:
     * generate text video ✅
     * generate background videos ✅
     * add music and sound effects ✅
-    * sync voice with text
+    * sync voice with text (possible?) 
 
 * API upload to youtube, facebook ...
 
